@@ -49,6 +49,7 @@ function asyncIteratorToObservable(generator) {
   let asyncIterator;
 
   const cleanup = () => {
+    console.log('cleanup');
     return asyncIterator && asyncIterator.return && asyncIterator.return()
   }
 
@@ -59,6 +60,7 @@ function asyncIteratorToObservable(generator) {
           asyncIterator = result;
 
           if (observer.closed) {
+            console.log('observer closed');
             cleanup();
             return;
           }

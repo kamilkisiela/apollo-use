@@ -1,0 +1,54 @@
+diff --git a/node_modules/@apollo/client/react/hooks/useMutation.js b/node_modules/@apollo/client/react/hooks/useMutation.js
+index e270bcd..2f13821 100644
+--- a/node_modules/@apollo/client/react/hooks/useMutation.js
++++ b/node_modules/@apollo/client/react/hooks/useMutation.js
+@@ -22,6 +22,11 @@ export function useMutation(mutation, options) {
+     mutationData.setOptions(updatedOptions);
+     mutationData.context = context;
+     useEffect(function () { return mutationData.afterExecute(); });
++    useEffect(function () { return function () {
++        mutationData = null;
++        updatedOptions = null;
++        mutationDataRef.current = null;
++    } }, []);
+     return mutationData.execute(result);
+ }
+ //# sourceMappingURL=useMutation.js.map
+\ No newline at end of file
+diff --git a/node_modules/@apollo/client/react/hooks/useSubscription.js b/node_modules/@apollo/client/react/hooks/useSubscription.js
+index 3557f8f..6b3fdec 100644
+--- a/node_modules/@apollo/client/react/hooks/useSubscription.js
++++ b/node_modules/@apollo/client/react/hooks/useSubscription.js
+@@ -27,6 +27,11 @@ export function useSubscription(subscription, options) {
+     subscriptionData.context = context;
+     useEffect(function () { return subscriptionData.afterExecute(); });
+     useEffect(function () { return subscriptionData.cleanup.bind(subscriptionData); }, []);
++    useEffect(function () { return function () {
++        subscriptionData = null;
++        updatedOptions = null;
++        subscriptionDataRef.current = null;
++    } }, []);
+     return subscriptionData.execute(result);
+ }
+ //# sourceMappingURL=useSubscription.js.map
+\ No newline at end of file
+diff --git a/node_modules/@apollo/client/react/hooks/utils/useBaseQuery.js b/node_modules/@apollo/client/react/hooks/utils/useBaseQuery.js
+index b259a8c..6127b1a 100644
+--- a/node_modules/@apollo/client/react/hooks/utils/useBaseQuery.js
++++ b/node_modules/@apollo/client/react/hooks/utils/useBaseQuery.js
+@@ -48,6 +48,14 @@ export function useBaseQuery(query, options, lazy) {
+         queryResult.error,
+         queryResult.data,
+     ]);
++    useEffect(function () {
++        return function () { 
++            memo = null;
++            queryDataRef.current = null;
++            queryData = null
++            updatedOptions = null;
++         };
++    }, []);
+     return result;
+ }
+ //# sourceMappingURL=useBaseQuery.js.map
+\ No newline at end of file

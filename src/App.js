@@ -2,7 +2,7 @@ import {
   ApolloProvider,
   gql,
   useSubscription,
-  useQuery,
+  // useQuery,
 } from "@apollo/client";
 import React, { useEffect, useState } from "react"
 import { client } from "./client";
@@ -12,18 +12,18 @@ class MyContext {
 }
 
 const Sample = () => {
-  useQuery(
-    gql`
-      query foo {
-        foo
-      }
-    `,
-    {
-      context: {
-        my: new MyContext(),
-      },
-    }
-  );
+  // useQuery(
+  //   gql`
+  //     query foo {
+  //       foo
+  //     }
+  //   `,
+  //   {
+  //     context: {
+  //       my: new MyContext(),
+  //     },
+  //   }
+  // );
   useSubscription(
     gql`
       subscription ping {
@@ -41,18 +41,18 @@ const Sample = () => {
 };
 
 function Inner() {
-  useQuery(
-    gql`
-      query foo {
-        foo
-      }
-    `,
-    {
-      context: {
-        my: new MyContext(),
-      },
-    }
-  );
+  // useQuery(
+  //   gql`
+  //     query foo {
+  //       foo
+  //     }
+  //   `,
+  //   {
+  //     context: {
+  //       my: new MyContext(),
+  //     },
+  //   }
+  // );
   useSubscription(
     gql`
       subscription ping {
@@ -71,11 +71,18 @@ function Inner() {
 
 export const Test = () => {
   const [show, setShow] = useState(true);
+  const [, forceUpdate] = useState("a");
 
   useEffect(() => {
     setTimeout(() => {
       setShow(false);
     }, 1000);
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      forceUpdate('b');
+    }, 3000);
   }, []);
 
   return show ? <Sample /> : null;

@@ -9,11 +9,16 @@
   "main": "src/index.js",
   "dependencies": {
     "@apollo/client": "3.2.4",
+    "@babel/core": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-react": "^7.12.1",
     "@graphql-tools/schema": "6.2.4",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
+    "babel-jest": "^26.5.2",
     "graphql": "15.3.0",
     "graphql-subscriptions": "^1.1.0",
+    "jest-environment-jsdom-sixteen": "^1.0.3",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-scripts": "3.4.3",
@@ -23,9 +28,10 @@
     "typescript": "3.8.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env jest-environment-jsdom-fourteen",
+    "start": "NODE_ENV=production SKIP_PREFLIGHT_CHECK=true react-scripts start",
+    "build": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
+    "xtest": "react-scripts test --env",
+    "test": "node  --expose-gc ./node_modules/.bin/jest --runInBand",
     "eject": "react-scripts eject"
   },
   "browserslist": [
