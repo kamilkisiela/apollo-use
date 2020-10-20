@@ -180,6 +180,7 @@ describe("leak", () => {
       pubsub = undefined;
       global.gc();
       await waitFor(3000);
+      debugger;
     },
     60 * 1000
   );

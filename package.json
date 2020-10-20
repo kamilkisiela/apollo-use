@@ -32,6 +32,7 @@
     "build": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
     "xtest": "react-scripts test --env",
     "test": "node  --expose-gc ./node_modules/.bin/jest --runInBand",
+    "test:debug": "node  --expose-gc --inspect-brk ./node_modules/.bin/jest --runInBand",
     "eject": "react-scripts eject"
   },
   "browserslist": [
