@@ -8,7 +8,7 @@
   ],
   "main": "src/index.js",
   "dependencies": {
-    "@apollo/client": "3.2.4",
+    "@apollo/client": "3.3.0-beta.14",
     "@babel/core": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.1",

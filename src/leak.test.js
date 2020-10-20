@@ -6,9 +6,11 @@ import {
   waitForElementToBeRemoved,
 } from "@testing-library/react";
 import { ApolloProvider, gql, useQuery, useSubscription } from "@apollo/client";
+import { Query } from "@apollo/client/react/components";
 import weak from "weak-napi";
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from "graphql-subscriptions";
 import { createClient } from "./client";
+import { parse } from "graphql";
 
 function waitFor(time) {
   return new Promise((resolve) => {
@@ -16,21 +18,21 @@ function waitFor(time) {
   });
 }
 
-describe('leak', () => {
+describe("leak", () => {
   let client;
   let pubsub;
 
   beforeEach(() => {
     pubsub = new PubSub();
     client = createClient(pubsub);
-  })
+  });
 
   afterEach(() => {
     client = undefined;
     pubsub = undefined;
-  })
+  });
 
-  test(
+  test.skip(
     "subscription",
     async (done) => {
       class MyContext {
@@ -38,14 +40,14 @@ describe('leak', () => {
           this.foo = "bar";
         }
       }
-  
+
       let myContext = new MyContext();
-  
+
       weak(myContext, function () {
         console.log(`YES! Context is no longer in memory!`);
         done();
       });
-  
+
       function First() {
         useSubscription(
           gql`
@@ -57,10 +59,10 @@ describe('leak', () => {
             context: myContext,
           }
         );
-  
+
         return <Second />;
       }
-  
+
       function Second() {
         useSubscription(
           gql`
@@ -72,14 +74,14 @@ describe('leak', () => {
             context: myContext,
           }
         );
-  
+
         return null;
       }
-  
+
       function Test() {
         const [show, setShow] = React.useState(true);
         // const [update, forceUpdate] = React.useState(1);
-  
+
         React.useEffect(() => {
           const t1 = setTimeout(() => {
             setShow(false);
@@ -89,19 +91,21 @@ describe('leak', () => {
           //   forceUpdate(update+1)
           // }, 2000);
           return () => {
-            clearTimeout(t1)
+            clearTimeout(t1);
             // clearTimeout(t2)
-          }
+          };
         }, [setShow]);
-  
+
         return show ? (
           <div data-testid="test">
             Enabled
             <First />
           </div>
-        ) : <div>Disabled</div>;
+        ) : (
+          <div>Disabled</div>
+        );
       }
-  
+
       function App() {
         React.useRef(myContext);
 
@@ -114,7 +118,7 @@ describe('leak', () => {
           </div>
         );
       }
-  
+
       let app = render(<App />);
       await waitFor(10000);
       app.debug();
@@ -129,7 +133,57 @@ describe('leak', () => {
     },
     40 * 1000
   );
-  
+
+  test(
+    "Query component",
+    async (done) => {
+      class MyContext {
+        constructor() {
+          this.foo = "bar";
+        }
+      }
+      let myContext = new MyContext();
+
+      weak(myContext, function () {
+        console.log(`YES! Context is no longer in memory!`);
+        done();
+      });
+
+      const query = parse(`query test { foo }`);
+
+      function MyComp() {
+        return (
+          <Query query={query} variables={{}} options={{ context: myContext }}>
+            {({ data }) => {
+              console.log("dataaaaa");
+              return <div>test</div>;
+            }}
+          </Query>
+        );
+      }
+
+      let app = render(
+        <div>
+          My App
+          <ApolloProvider client={client}>
+            <MyComp />
+          </ApolloProvider>
+        </div>
+      );
+      await waitFor(10000);
+      app.debug();
+      app.unmount();
+      app.debug();
+      app = undefined;
+      myContext = undefined;
+      client = undefined;
+      pubsub = undefined;
+      global.gc();
+      await waitFor(3000);
+    },
+    60 * 1000
+  );
+
   test.skip(
     "query",
     async (done) => {
@@ -138,14 +192,14 @@ describe('leak', () => {
           this.foo = "bar";
         }
       }
-  
+
       let myContext = new MyContext();
-  
+
       weak(myContext, function () {
         console.log(`YES! Context is no longer in memory!`);
         done();
       });
-  
+
       function First() {
         useQuery(
           gql`
@@ -157,10 +211,10 @@ describe('leak', () => {
             context: myContext,
           }
         );
-  
+
         return <Second />;
       }
-  
+
       function Second() {
         useQuery(
           gql`
@@ -172,36 +226,38 @@ describe('leak', () => {
             context: myContext,
           }
         );
-  
+
         return null;
       }
-  
+
       function Test() {
         const [show, setShow] = React.useState(true);
         const [update, forceUpdate] = React.useState(1);
-  
+
         React.useEffect(() => {
           const t1 = setTimeout(() => {
             setShow(false);
           }, 1000);
           const t2 = setTimeout(() => {
-            console.log('force update')
-            forceUpdate(update+1)
+            console.log("force update");
+            forceUpdate(update + 1);
           }, 2000);
           return () => {
-            clearTimeout(t1)
-            clearTimeout(t2)
-          }
+            clearTimeout(t1);
+            clearTimeout(t2);
+          };
         }, [setShow, forceUpdate]);
-  
+
         return show ? (
           <div data-testid="test">
             Enabled
             <First />
           </div>
-        ) : <div>Disabled</div>;
+        ) : (
+          <div>Disabled</div>
+        );
       }
-  
+
       function App() {
         React.useRef(myContext);
 
@@ -214,7 +270,7 @@ describe('leak', () => {
           </div>
         );
       }
-  
+
       let app = render(<App />);
       await waitFor(10000);
       app.debug();
@@ -229,4 +285,4 @@ describe('leak', () => {
     },
     40 * 1000
   );
-})
+});
