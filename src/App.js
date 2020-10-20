@@ -4,40 +4,30 @@ import {
   useSubscription,
   // useQuery,
 } from "@apollo/client";
-import React, { useEffect, useState } from "react"
+import { Query } from "@apollo/client/react/components";
+import React, { useEffect, useState } from "react";
 import { client } from "./client";
 
 class MyContext {
   dummy = "=====";
 }
 
-const Sample = () => {
-  // useQuery(
-  //   gql`
-  //     query foo {
-  //       foo
-  //     }
-  //   `,
-  //   {
-  //     context: {
-  //       my: new MyContext(),
-  //     },
-  //   }
-  // );
-  useSubscription(
-    gql`
-      subscription ping {
-        ping
-      }
-    `,
-    {
-      context: {
-        my: new MyContext(),
-      },
-    }
-  );
+const c = new MyContext();
+const query = gql`
+  query test {
+    foo
+  }
+`;
 
-  return <Inner />;
+const Sample = () => {
+  return (
+    <Query query={query} variables={{}} options={{ context: c }}>
+      {({ data }) => {
+        console.log("dataaaaa");
+        return <div>renderer of Query component</div>;
+      }}
+    </Query>
+  );
 };
 
 function Inner() {
@@ -81,7 +71,7 @@ export const Test = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      forceUpdate('b');
+      forceUpdate("b");
     }, 3000);
   }, []);
 

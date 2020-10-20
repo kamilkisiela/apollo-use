@@ -153,7 +153,7 @@ describe("leak", () => {
 
       function MyComp() {
         return (
-          <Query query={query} variables={{}} options={{ context: myContext }}>
+          <Query query={query} variables={myContext}>
             {({ data }) => {
               console.log("dataaaaa");
               return <div>test</div>;
