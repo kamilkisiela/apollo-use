@@ -1,8 +1,7 @@
 import {
   ApolloProvider,
   gql,
-  useSubscription,
-  // useQuery,
+  useQuery,
 } from "@apollo/client";
 import React, { useEffect, useState } from "react"
 import { client } from "./client";
@@ -12,62 +11,24 @@ class MyContext {
 }
 
 const Sample = () => {
-  // useQuery(
-  //   gql`
-  //     query foo {
-  //       foo
-  //     }
-  //   `,
-  //   {
-  //     context: {
-  //       my: new MyContext(),
-  //     },
-  //   }
-  // );
-  useSubscription(
+  // const [skip, setSkip] = useState(false);
+
+  useQuery(
     gql`
-      subscription ping {
-        ping
+      query foo {
+        foo
       }
     `,
     {
+      skip: true,
       context: {
         my: new MyContext(),
       },
     }
   );
 
-  return <Inner />;
+  return <div>asdasd</div>;
 };
-
-function Inner() {
-  // useQuery(
-  //   gql`
-  //     query foo {
-  //       foo
-  //     }
-  //   `,
-  //   {
-  //     context: {
-  //       my: new MyContext(),
-  //     },
-  //   }
-  // );
-  useSubscription(
-    gql`
-      subscription ping {
-        ping
-      }
-    `,
-    {
-      context: {
-        my: new MyContext(),
-      },
-    }
-  );
-
-  return null;
-}
 
 export const Test = () => {
   const [show, setShow] = useState(true);

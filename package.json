@@ -28,7 +28,7 @@
     "typescript": "3.8.3"
   },
   "scripts": {
-    "start": "NODE_ENV=production SKIP_PREFLIGHT_CHECK=true react-scripts start",
+    "start": "cross-env SKIP_PREFLIGHT_CHECK=true react-scripts start",
     "build": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
     "xtest": "react-scripts test --env",
     "test": "node  --expose-gc ./node_modules/.bin/jest --runInBand",
